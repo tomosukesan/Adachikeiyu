@@ -33,6 +33,11 @@ Sub スケジュール作成()
 	Next
 
 	Call make_discharge_sheet
+
+	Application.DisplayAlerts = False
+	Sheets(1).Delete
+	Sheets(1).Delete
+	Application.DisplayAlerts = True
 	Application.ScreenUpdating = True
 	MsgBox "作成完了しました。"
 	src_book.Close
