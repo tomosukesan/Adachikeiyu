@@ -189,185 +189,132 @@ Function sort_num(ByVal count As Integer, ByRef sort_array() As Integer)
 End Function
 
 Function sort_boxes(ByVal count As Integer) As Variant
-	Dim box As Shape, i As Integer, j As Integer, tmp As Integer
-	Dim boxes()
-	ReDim boxes(count —	1, 1)
+	' Dim box As Shape, i As Integer, j As Integer, tmp As Integer
+	' Dim boxes()
+	' ReDim boxes(count —	1, 1)
 
-	For Each box In Selection.ShapeRange
-		boxes(i, 0) = box.Top
-		boxes(i , 1) = box.Height
+	' For Each box In Selection.ShapeRange
+	' 	boxes(i, 0) = box.Top
+	' 	boxes(i , 1) = box.Height
+	' 	i = i + 1
+	' Next
+	' i = 0
+	' For i = i To count - 2
+	' 	For j = i + 1 To count - 1
+	' 		If boxes(i, 0) > boxes(j. 0) Then
+	' 		tmp = boxes(i, 0)
+	' 		boxes(i, 0) = boxes(j, 0)
+	' 		boxes (j . 0) tmp
+	' 		tmp = boxes(i , l) boxes ( i , boxes (j . l) boxes (j .
+	' 		End If
+
+	' 	Next
+	' Next
+	' sort_boxes = boxes()
+End Function
+
+' Function count_unit(ByVal count As Integer, num As Integer, boxes ())
+Function count_unit(ByVal count As Integer, num As Integer)
+	Dim i As Integer, unit As Integer, total_unit As Integer
+
+	Range("K" & num).Value = ""
+	For i = 1 To count - 1
+		If Selection.ShapeRange(i).Height < 90 Then
+			unit = 1
+		ElseIf Selection.ShapeRange(i).Height < 135 Then
+			unit = 2
+		ElseIf Selection.ShapeRange(i).Height < 190 Then
+			unit = 3
+		ElseIf Selection.ShapeRange(i).Height < 255 Then
+			unit = 4
+		Else
+			MsgBox Range("C" & num).Value & vbCrLf & "手動での単位入力が必要です"
+			Exit Function
+	Next
+	Range("K" & num).Value = total_unit
+End Function
+
+Function count_total_unit(ByVal cel_num As Integer, search_name As String)
+	Dim ref_num As Integer, i As Integer, j As Integer
+	Dim pre_day_total_unit As Integer, today_unit As Integer
+	Dim pre_sheet As Worksheet
+
+	If ActiveSheet.Previous Is Nothing Or InStr(ActiveSheet.Previous.Name, "(0)" > 0 Then
+		Range ("L" & cel_num).Value = Range ("K" & cel_num).Value
+		Exit Function
+	End If
+	If InStr (ActiveSheet.Previous.Name, "日") > 0 Then ActiveSheet.Previous.Select
+
+	If search_name = ActiveSheet.Previous.Range("C" & cel_num) Then
+		pre_day_total_unit = ActiveSheet.Previous.Range("L" & cel_num).Value
+	End If
+
+	If InStr(ActiveSheet.Name, "日") > 0 Then ActiveSheet.Next.Select
+
+	today_unit = Range("K" & cel_num).Value
+	Range("L" & cel num).Value = pre_day_total_unit + today_unit
+End Function
+
+Sub discharge()
+	On Error GoTo error_msg
+	Dim delete_num, ent_day, staff, patient As String
+	Dim num, month_unit, i As Integer
+	Dim current_ sheet As Worksheet
+
+	Set current_ sheet = ActiveSheet
+	num = Selection.Row
+	staff = Range("A" & num).MergeArea(1, 1).Value
+	patient = Range("C" & num).Value
+	month_unit = Range("L" & num).Value
+	ent_day = Range("B1").MergeArea(1 , 1).Value
+
+	If patient = "" Then Exit Sub
+
+	delete_num = InputBox("何日分の退院処理をしますか？")  & vbCrLf &  "日曜日も含め、数字のみ、入力してください。"
+
+	If StrPtr(delete_num) = 0 Then
+		Exit Sub
+	ElseIf Not delete_num = 0 Then
+		Call erase_box_and_info(num, patient, CInt(delete_num))
+	End If
+
+	Worksheets(Worksheets.count).Select
+	If Not ActiveSheet.Name = "退院" Then
+		MsgBox "「退院」シートの後ろに余分なシートが存在しています。" & vbCrLf & "余分なシートであれば削除してください。"
+		Exit Sub
+	End If
+	Do While Not IsEmpty(Cells(i, 1).Value)
 		i = i + 1
-	Next
-	i = 0
-	For i = i To count - 2
-		For j = i + 1 To count - 1
-			If boxes(i, 0) > boxes(j. 0) Then
-			tmp = boxes(i, 0)
-			boxes(i, 0) = boxes(j, 0)
-			boxes (j . 0) tmp
-			tmp = boxes(i , l) boxes ( i , boxes (j . l) boxes (j .
-			End If
-
-		Next
-	Next
-	sort_boxes = boxes()
-End Function
-
-Function count_unit(ByVal count As Integer, num As Integer, boxes ())
-
-Dim i As Integer, unit As Integer, total_unit As Integer
-
-
-
-Range ("K" & num) . Value =
-
-For i = 0 To count — 1
-
-If boxes ( i , l) < 90 Then
- unit =1
-
-Elself boxes ( i , uni unit = 2
-
-l) < 135 Then
-
-El self boxes(i, uni t = 3
-
-l) < 190 Then
-
-El self boxes ( i .
-
-l ) < 255 Then
-
-unit = 4 El se
-
-MsgBox Range ("C" & num) . Value & vbCrLf & “手動での入力が必要です。”
-
-Exit Function End If tota I _un i t = unit + total_unit
-
-Next
-
-Range ("K" & num). Va lue = total_unit
-
-End Function
-
-Function count_tota I _un it (ByVal cel_num As Integer, search_name As Str ing)
-
-Dim ref_num As Integer, i As Integer, j As Integer
-
-Dim  pre_day_total_unit As Integer, today_unit As Integer
-
-Dim pre_sheet As Worksheet
-
-If ActiveSheet. Previous I s Noth ing Or InStr (ActiveSheet. Previous. Name, “(0)” > O Then Range ("L" & cel_num). Value — Range ("K" & cel_num) . Value
-
-Exit Function
-
-End If
-
-If InStr (Acti veSheet. Previous. Name, " a ") > 0 Then ActiveSheet. Previous. Select
-
-If search_name = ActiveSheet. Previous. Range ("C" & cel_num) Then pre_day total_unit = ActiveSheet. Previous. Range ("L" & cel_num) . Value
-
-End If
-
-If InStr (ActiveSheet. Name, " a ") > 0 Then ActiveSheet. Next. Select
-
-today_unit - Range ("K" & cel_num) . Value
-
-Range ("L" & cel num) . Va lue = pre_day_tota l_unit + today_unit
-
-End Function
-
-Sub discharge ( )
-
-On Error GoTo error_msg
-
-Dim delete_num, ent_day, staff, patient As String
-
-Dim num, month_unit, i As Integer Dim current_ sheet As Worksheet
-
-Set current_ sheet = Act i veSheet num = Selecti on. Row staff = Range ("A" & num) . MergeArea (1, 1) . Va lue patient = Range ("C" & num) . Value month_unit — Range ("L" & num) . Value ent_day — Range ( 'F BI MergeArea (1 , 1) . Value
-
-godulet - 4
-
-	If patient =	Then Exit Sub
-
-“数字のみ入力してください。”
-
-delete num = InputBox(“何日分の退院処理をしますか？”)  & vbCrLf & " a gæ a t, ab,
-
-If StrPtr (delete_num) = 0 Then Exit Sub
-
-Elself Not delete num = 0 Then
-
-CalI erase_box_and_info (num, pati ent, Clnt (delete_num) ) End If
-
-Worksheets gWorksheets. count) . Se I ect
-
-If Not ActiveSheet.Name = “退院” Then
-
-	MsgBox “「退院」シートの後ろに余分なシートが存在しています。” & vbCrLf & “余分なシートであれば削除してください。”
-
-Exit Sub
-
-End If
-
-Do Whi le Not IsEmpty(Cel I s ( i . 1) . Va lue)
-
-I = i + 1
-
-Loop
-
-Cel Is ( i ,
-
-= patient
-
-cel Is ( i . 2)
-
-= ent_day
-
-cel Is ( i . 3)
-
-= month_unit
-
-Cel Is ( i . 4)
-
-= staff
-
-current_sheet Se I ect
-
-Exit Sub error_msg.
-
-	MsgBox   “エラーが発生しました”	& vbCrLf & “選択箇所を確認し、再度お試しください。”
-
+	Loop
+
+	Cells(i, 1)	= patient
+	Cells(i, 2) = ent_day
+	Cells(i, 3) = month_unit
+	Cells(i, 4) = staff
+
+	current_sheet.Select
+	Exit Sub
+error_msg:
+	MsgBox   "エラーが発生しました"	& vbCrLf & "選択箇所を確認し、再度お試しください。"
 End Sub
 
-Function erase_box_and_info (ByVal row_num As Integer, patient As Str ing, delete_num As Integer)
+Function erase_box_and_info(ByVal row_num As Integer, patient As String, delete_num As Integer)
+	Dim col _num, sheet_num As Integer
+	Dim box As Shape
 
-Dim col _num, sheet_num As Integer Dim box As Shape
-
-For sheet_num = 1 To delete_num
-
-Worksheets (ActiveSheet. Index + 1) . Select
-
-If Acti veSheet. Index = Worksheets. count Then Exit Function
-
-End If
-
-For Each box In ActiveSheet. Shapes
-
-If box. Type = 1 And InStr (box. TextFrame. Characters. Text, Range ("C" & row_num) Value) > 0 Then box. Delete
-
-End If
-
-Next
-
-For col num = 2 To 12
-
-Cells (row_num, col_num) Value —
-
-If col_num = 6 Then col_num = col num + 2
-
-Next Next
-
+	For sheet_num = 1 To delete_num
+		Worksheets(ActiveSheet.Index + 1).Select
+		If ActiveSheet.Index = Worksheets.count Then
+			Exit Function
+		End If
+		For Each box In ActiveSheet.Shapes
+			If box. Type = 1 And InStr(box.TextFrame.Characters.Text, Range("C" & row_num).Value) > 0 Then
+				box. Delete
+			End If
+		Next
+		For col num = 2 To 12
+			Cells(row_num, col_num) Value = ""
+			If col_num = 6 Then col_num = col num + 2
+		Next
+	Next
 End Function
