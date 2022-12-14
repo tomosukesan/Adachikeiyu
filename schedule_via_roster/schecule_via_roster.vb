@@ -21,21 +21,17 @@ Sub スケジュール作成()
 	Dim col As Integer
 	Dim src_book As Workbook
 
-	Set src_book = make_book
+	Set src_book = make_book()
 
 	Application.ScreenUpdating = False
 
 	For col = 4 To 34
-		' If Cel I s (3. COD. Text -	Then なぜか空白判定されてしまう
-			' Exit For
-		' End If
 		Call make_sheet(col)
 	Next
 
 	Call make_discharge_sheet
 
 	Application.DisplayAlerts = False
-	Sheets(1).Delete
 	Sheets(1).Delete
 	Application.DisplayAlerts = True
 	Application.ScreenUpdating = True
@@ -50,7 +46,7 @@ Function make_book () As Workbook
 	Dim src_sheet As Worksheet
 	Dim src_book As Workbook
 
-	path = “”  ' スケジュールを作成するフォルダのパス
+	path = ""  ' スケジュールを作成するフォルダのパス
 
 	file_name = InputBox("ファイル名を入力してください。")
 	If StrPtr (file_name) = 0 Then End
@@ -75,7 +71,6 @@ Function make_sheet (ByVal col As Integer)
 
 	day = Sheets(1).Cells(3, col).text
 	weekday = Sheets(1).Cells(4, col).text
-	' Set roster = ActiveSheet
 
 	Sheets("原本").Copy after:=Sheets(Sheets.Count)
 	ActiveSheet.Name = day & "(" & weekday & ")"
