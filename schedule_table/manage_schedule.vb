@@ -21,12 +21,12 @@ End Sub
 ' 作成ボタン：図形作成 '
 Sub make_box()
 	On Error GoTo error_msg		' エラーハンドリング
-	Dim txt As String			' セルにある文字列を格納する変数
+	Dim txt As String		' セルにある文字列を格納する変数
 	Dim i As Integer, x As Integer, selection_num As Integer
 	Dim background_color		' セルの背景色を格納
 
 	Call global_input_num		' グローバル変数の値を代入
-	i = Selection(1).Row					' 選択されたセルの最初の行の数値を格納
+	i = Selection(1).Row			' 選択されたセルの最初の行の数値を格納
 	selection_num = Selection.Rows.count	' 選択されたセルの最後の行の数値を格納
 	If IsEmpty(Range("C" & i).Value) Then	' 空白セルの時は無視する
 		Exit Sub
