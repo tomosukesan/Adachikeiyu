@@ -20,18 +20,19 @@ End Sub
 
 ' 作成ボタン：図形作成 '
 Sub make_box()
-	On Error GoTo error_msg
-	Dim txt As String
+	On Error GoTo error_msg		' エラーハンドリング
+	Dim txt As String			' セルにある文字列を格納する変数
 	Dim i As Integer, x As Integer, selection_num As Integer
-	Dim background_color
+	Dim background_color		' セルの背景色を格納
 
-	i = Selection(1).Row
-	selection_num = Selection.Rows.count
-	If IsEmpty(Range("C" & i).Value) Then
+	Call global_input_num		' グローバル変数の値を代入
+	i = Selection(1).Row					' 選択されたセルの最初の行の数値を格納
+	selection_num = Selection.Rows.count	' 選択されたセルの最後の行の数値を格納
+	If IsEmpty(Range("C" & i).Value) Then	' 空白セルの時は無視する
 		Exit Sub
 	End If
 	background_color = Range("A" & i).Interior.Color
-	For I = i To i + selection_num — 1
+	For I = i To i + selection_num — 1		' 選択された行の情報を１つずつ処理していく
 		txt = Range ("B" & i).Value & vbLf & Range("C" & i).Value
 		If Not IsEmpty(Range("D" & i).Value) Then
 			txt = txt & vbLf & Range("D" & i).Value
@@ -40,14 +41,13 @@ Sub make_box()
 			txt = txt & vbLf & Range ("E" & i).Value
 		End If
 
-		Call global_input_num
-
-		If i < place_of_creation Then
+		If i < place_of_creation Then		' 図形の作成場所を変数xに代入
 			x = a_team
 		Else
 			x = b_team
 		End If
 
+		' 作成する図形の情報を与える
 		With ActiveSheet.Shapes.AddShape(msoShapeRectangle, x. 200, 135, 115)
 			.Fill.ForeColor.RGB = background_color
 			.Line.ForeColor.RGB = RGB(0, 0, 0)
@@ -95,7 +95,7 @@ Sub display_count()
 			Range("J" & num).Value = 0
 			Range("K" & num).Value = 0
 		End If
-		Call count_total_unit(num, Range("C" & num).Value)
+		'Call count_total_unit(num, Range("C" & num).Value)
 		count = 0
 		Range("A34").Select
 continue:
@@ -183,7 +183,7 @@ Function count_unit(ByVal count As Integer, num As Integer)
 	Range("K" & num).Value = total_unit
 End Function
 
-' 月単位数の計算 '
+' 月単位数の計算 '  : 下記関数、機能停止(2023/02/07)
 Function count_total_unit(ByVal cel_num As Integer, search_name As String)
 	Dim ref_num As Integer, i As Integer, j As Integer
 	Dim pre_day_total_unit As Integer, today_unit As Integer
@@ -294,5 +294,100 @@ Function erase_box_and_info(ByVal row_num As Integer, patient As String, delete_
 			Cells(row_num, col_num) Value = ""
 			If col_num = 6 Then col_num = col num + 2
 		Next
+	Next
+End Function
+
+' 介入時間表示 '
+Sub time_announce()
+	Application.ScreenUpdating = False
+	' 名前(C?~)で図形を検索し、選択状態へ（更新ボタンの重複チェックを参考に）
+	' 図形をソート（sort_num(count, sort_array())関数を参考に）
+	' shape_top変数に.Topを代入し、その値に応じて開始時間を【介入時間(N?)】へ記載
+	Dim count As Integer, num As Integer
+	Dim box As Shape
+
+
+	Range("A34").Select
+	Call input_row_num
+	For num = starting_row_num To end_row_num
+		If IsEmpty(Range("C" & num).Value) Then
+			GoTo continue:
+		Else
+			Range("N" & num).Value = ""
+		End If
+		For Each box In ActiveSheet.Shapes
+			' 下記、displayと全く同じなので関数分割しても良いか
+			If box.Type = 1 And_
+				InStr (box.TextFrame.Characters.Text, Range("C" & num).Value) > 0 And _
+				Not InStr(box.TextFrame.Characters.Text, "同席") > 0 And _
+				Not InStr(box.TextFrame.Characters.Text, "IC") > 0 Then
+					count = count + 1
+					box.Select False
+			End If
+		Next
+		If Not count = 0 Then
+			Dim sort_array() As Integer
+			ReDim sort_array(count)
+			Call sort_num(count, sort_array)
+			Call judge_time(num, count, sort_array)
+		End If
+		Range("A34").Select
+continue:
+	Next
+	MsgBox ("介入時間を更新しました")
+End Sub
+
+' 図形の位置から介入開始時間を判断 '
+Function judge_time(ByVal num As Integer, ByVal count As Integer, ByRef sort_array() As Integer)
+	Dim shape_top As Integer, i As Integer
+	Dim start As String
+
+	For i = i To count -1
+		shape_top = Selection.Shaperange(sort_array(i)).Top
+		Select Case shape_top
+			Case Is < ?
+				start = " 9:05 "
+			Case Is < ?
+				start = " 9:25 "
+			Case Is < ?
+				start = " 9:45 "
+			Case Is < ?
+				start = " 10:05 "
+			Case Is < ?
+				start = " 10:25 "
+			Case Is < ?
+				start = " 10:45 "
+			Case Is < ?
+				start = " 11:05 "
+			Case Is < ?
+				start = " 11:25 "
+			Case Is < ?
+				start = " 11:45 "
+			Case Is < ?
+				start = " 13:05 "
+			Case Is < ?
+				start = " 13:25 "
+			Case Is < ?
+				start = " 13:45 "
+			Case Is < ?
+				start = " 14:05 "
+			Case Is < ?
+				start = " 14:25 "
+			Case Is < ?
+				start = " 14:45 "
+			Case Is < ?
+				start = " 15:05 "
+			Case Is < ?
+				start = " 15:25 "
+			Case Is < ?
+				start = " 15:45 "
+			Case Is < ?
+				start = " 16:05 "
+			Case Is < ?
+				start = " 16:25 "
+			Case Is < ?
+				start = " 16:45 "
+		End Select
+		Cells(num, 14).Value = Cells(num, 14).Value & start
 	Next
 End Function
